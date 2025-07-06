@@ -27,7 +27,7 @@ namespace WebApplication1.Controllers.usuarios
             if (usuariosMAClass == null || string.IsNullOrWhiteSpace(usuariosMAClass.usuario) || string.IsNullOrWhiteSpace(usuariosMAClass.contraseña))
             {
                 return BadRequest("Faltan datos.");
-            }
+        }
 
             // Lógica de autenticación
             bool autenticado = _modelo.TestUC(usuariosMAClass.usuario, usuariosMAClass.contraseña)
