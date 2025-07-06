@@ -15,6 +15,7 @@ namespace WebApplication1.Controllers.usuarios
         private readonly UsuariosModelMesaAyuda _modelo;
                 
 
+
         public UsuariosMAController()
         {
             _modelo = new UsuariosModelMesaAyuda(); // Ya no necesita IConfiguration
