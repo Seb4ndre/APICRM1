@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
@@ -46,7 +47,35 @@ namespace WebApplication1.Models.usuarios
             }
             return dt;
         }
+        public DataTable TraerUsuarios()
+        {
+            var dt = new DataTable();
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlCommand cmd = new SqlCommand("dbo.TraerUsuarios", conn))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
 
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                da.Fill(dt);
+            }
+            return dt;
+        }
+        public DataTable TraerPHSporUsuario(string username)
+        {
+            var dt = new DataTable();
+
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using (SqlCommand cmd = new SqlCommand("dbo.TraerPHSporUsuario", conn))
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@Username", username);
+
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                da.Fill(dt);
+            }
+
+            return dt;
+        }
 
 
     }

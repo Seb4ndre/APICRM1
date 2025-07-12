@@ -78,5 +78,55 @@ namespace WebApplication1.Controllers.usuarios
                 return InternalServerError(ex);
             }
         }
+        [HttpGet]
+        [Route("TraerUsuarios")]
+        public IHttpActionResult TraerUsuarios()
+        {
+            try
+            {
+                var resultado = _modelo.TraerUsuarios();
+
+                // Convertir DataTable a lista de objetos anónimos
+                var lista = resultado.AsEnumerable().Select(row => new
+                {
+                    NombreCompleto = row["NombreCompleto"].ToString(),
+                    Correo = row["Correo"].ToString(),
+                    Empresa = row["Empresa"].ToString(),
+                    Rol = row["Rol"].ToString()
+                }).ToList();
+
+                return Ok(lista);
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+        [HttpPost]
+        [Route("TraerPorUsuario")]
+        public IHttpActionResult TraerPorUsuario([FromBody] UsuarioRequest request)
+        {
+            if (request == null || string.IsNullOrEmpty(request.Username))
+                return BadRequest("Username es requerido.");
+
+            try
+            {
+                var tabla = _modelo.TraerPHSporUsuario(request.Username);
+
+                var lista = tabla.AsEnumerable().Select(row => new
+                {
+                    PHSId = Convert.ToInt32(row["PHSId"]),
+                    Nombre = row["Nombre"].ToString(),
+                    Direccion = row["Direccion"].ToString()
+                }).ToList();
+
+                return Ok(lista);
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+
     }
 }

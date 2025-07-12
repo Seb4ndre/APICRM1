@@ -7,5 +7,9 @@
         public string Tusuario { get; set; }
         public int IdRol { get; set; }
     }
-    
+    public class UsuarioRequest
+    {
+        public string Username { get; set; }
+    }
+
 }
