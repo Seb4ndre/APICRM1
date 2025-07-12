@@ -77,6 +77,21 @@ namespace WebApplication1.Models.usuarios
             return dt;
         }
 
+        public DataTable TraerNormativas()
+        {
+            DataTable tabla = new DataTable();
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                SqlCommand cmd = new SqlCommand("TraerNormativas", conn);
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                SqlDataAdapter da = new SqlDataAdapter(cmd);
+                da.Fill(tabla);
+            }
+            return tabla;
+        }
+
+
 
     }
 }

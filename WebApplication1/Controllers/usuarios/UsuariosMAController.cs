@@ -128,5 +128,32 @@ namespace WebApplication1.Controllers.usuarios
             }
         }
 
+        [HttpGet]
+        [Route("TraerNormativas")]
+        public IHttpActionResult TraerNormativas()
+        {
+            try
+            {
+                var resultado = _modelo.TraerNormativas();
+
+                // Convertir DataTable a lista de objetos anónimos
+                var lista = resultado.AsEnumerable().Select(row => new
+                {
+                    Articulo = row["Articulo"].ToString(),
+                    Titulo = row["Titulo"].ToString(),
+                    Descripcion = row["Descripcion"].ToString(),
+                    FechaCreacion = Convert.ToDateTime(row["FechaCreacion"]).ToString("yyyy-MM-dd"),
+                    Categoria = row["Categoria"].ToString(),
+                    RutaArchivo = row["RutaArchivo"].ToString()
+                }).ToList();
+
+                return Ok(lista);
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+        }
+
     }
 }
