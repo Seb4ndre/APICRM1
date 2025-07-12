@@ -13,9 +13,6 @@ namespace WebApplication1.Controllers.usuarios
     public class UsuariosMAController : ApiController
     {
         private readonly UsuariosModelMesaAyuda _modelo;
-                
-
-
         public UsuariosMAController()
         {
             _modelo = new UsuariosModelMesaAyuda(); // Ya no necesita IConfiguration
@@ -25,33 +22,56 @@ namespace WebApplication1.Controllers.usuarios
         [Route("TestUC")]
         public IHttpActionResult TestUC([FromBody] UsuariosMAClass usuariosMAClass)
         {
-            // Validar entrada
             if (usuariosMAClass == null || string.IsNullOrWhiteSpace(usuariosMAClass.usuario) || string.IsNullOrWhiteSpace(usuariosMAClass.contraseña))
             {
                 return BadRequest("Faltan datos.");
-        }
+            }
 
-            // Lógica de autenticación
-            bool autenticado = _modelo.TestUC(usuariosMAClass.usuario, usuariosMAClass.contraseña)
-                                .AsEnumerable()
-                                .Any(row => Convert.ToInt32(row["Resultado"]) == 1);
+            try
+            {
+                DataTable resultado = _modelo.TestUC(usuariosMAClass.usuario, usuariosMAClass.contraseña);
 
-            // Devolver directamente true o false
-            return Ok(autenticado);
+                if (resultado.Rows.Count > 0)
+                {
+                    var row = resultado.Rows[0];
+                    int resultadoSP = Convert.ToInt32(row["Resultado"]);
+                    int? rolId = row["RolId"] != DBNull.Value ? Convert.ToInt32(row["RolId"]) : (int?)null;
+
+                    return Ok(new
+                    {
+                        autenticado = resultadoSP == 1,
+                        rolId = rolId
+                    });
+                }
+                else
+                {
+                    return Ok(new { autenticado = false, rolId = (int?)null });
+                }
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
         }
         [HttpPost]
-        [Route("Ob_Permiso_User")]
-        public IHttpActionResult Ob_Permiso_User([FromBody] UsuariosMAClass request)
+        [Route("PermisoRolUsuario")]
+        public IHttpActionResult PermisoRolUsuario([FromBody] UsuariosMAClass request)
         {
             try
             {
-                if (request == null || string.IsNullOrEmpty(request.Tusuario))
+                if (request == null || request.IdRol <= 0)
                 {
-                    return BadRequest("Username es requerido.");
+                    return BadRequest("IdRol es requerido y debe ser mayor que 0.");
                 }
 
-                var resultado = _modelo.Ob_Permiso_User(request.Tusuario);
-                return Ok(resultado);
+                // Obtener los permisos para el rol enviado desde el frontend
+                var resultado = _modelo.ObtenerBarraLateralPorRol(request.IdRol);
+
+                return Ok(new
+                {
+                    rolId = request.IdRol,
+                    barra = resultado
+                });
             }
             catch (Exception ex)
             {

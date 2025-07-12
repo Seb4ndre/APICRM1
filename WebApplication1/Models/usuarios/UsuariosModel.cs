@@ -32,20 +32,22 @@ namespace WebApplication1.Models.usuarios
             return dt;
         }
 
-        public DataTable Ob_Permiso_User(string usuario)
+        public DataTable ObtenerBarraLateralPorRol(int rolId)
         {
             var dt = new DataTable();
-
             using (SqlConnection conn = new SqlConnection(_connectionString))
-            using (SqlCommand cmd = new SqlCommand("dbo.Nombre_SP_Ob_Permiso_User", conn)) // Cambia por el SP real
+            using (SqlCommand cmd = new SqlCommand("dbo.Obtener_BarraLateral_PorRol", conn))
             {
                 cmd.CommandType = CommandType.StoredProcedure;
-                cmd.Parameters.AddWithValue("@Usuario", usuario);
+                cmd.Parameters.AddWithValue("@RolId", rolId);
 
                 SqlDataAdapter da = new SqlDataAdapter(cmd);
                 da.Fill(dt);
             }
             return dt;
         }
+
+
+
     }
 }
