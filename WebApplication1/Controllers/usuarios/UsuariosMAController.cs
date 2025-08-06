@@ -127,7 +127,6 @@ namespace WebApplication1.Controllers.usuarios
                 return InternalServerError(ex);
             }
         }
-
         [HttpGet]
         [Route("TraerNormativas")]
         public IHttpActionResult TraerNormativas()
